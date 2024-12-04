@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -32,8 +33,41 @@ func getNumbers(byteBoi []byte) (int, int) {
 	return numberSlice[0], numberSlice[1]
 }
 
+func getValidInput(data []byte) []byte {
+	stringData := string(data)
+	capturing := true
+	checkingDoDont := false
+	var capturedData strings.Builder
+	var currentDoDont strings.Builder
+	for _, currentRune := range stringData {
+		if currentRune == 'd' {
+			checkingDoDont = true
+		}
+		if checkingDoDont {
+			currentDoDont.WriteRune(currentRune)
+		}
+		if capturing {
+			capturedData.WriteRune(currentRune)
+		}
+		if checkingDoDont && currentRune == '(' {
+			stringBoi := currentDoDont.String()
+			log.Println(stringBoi)
+			if currentDoDont.String() == "do(" {
+				capturing = true
+			} else if currentDoDont.String() == "don't(" {
+				capturing = false
+			}
+			checkingDoDont = false
+			currentDoDont.Reset()
+		}
+	}
+	return []byte(capturedData.String())
+}
+
 func main() {
 	data, err := os.ReadFile("input.txt")
+	// for day 2, we need to remove input, otherwise commend out this line
+	data = getValidInput(data)
 	checkError(err)
 	matches := regexpression.FindAll(data, -1)
 	total := 0
