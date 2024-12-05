@@ -134,6 +134,7 @@ func slicesEqual(a, b []byte) bool {
 	return true
 }
 
+// pt2
 func main() {
 	fileName := "/Users/kevin/git/misc/aoc2024/day4/input.txt"
 	fullFile, err := os.ReadFile(fileName)
